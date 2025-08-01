@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SyntaxRepo Password Generator</title>
+    <!-- Tailwind CSS for modern styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Custom styles for a cleaner look */
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #1a202c; /* Dark background */
+            color: #e2e8f0; /* Light text */
+        }
+        html {
+            scroll-behavior: smooth;
+        }
+    </style>
+</head>
+<body class="flex flex-col min-h-screen">
+
+    <!-- Navigation Bar -->
+    <nav class="bg-gray-900 shadow-lg fixed w-full z-10 top-0">
+        <div class="container mx-auto px-4 py-4">
+            <div class="flex justify-between items-center">
+                <!-- Clicking this will now hide the generator section -->
+                <div id="homeButton" class="text-xl font-bold text-white cursor-pointer">SyntaxRepo</div>
+                <!-- This button now shows the generator section -->
+                <button id="navGoToGeneratorButton" class="text-white hover:text-gray-300 transition duration-300 ease-in-out">Go to Generator</button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content / Hero Section -->
+    <main id="homepage-section" class="flex-grow flex items-center justify-center p-4 md:p-8 pt-20">
+        <div class="text-center container max-w-2xl space-y-6">
+            <h1 class="text-5xl md:text-6xl font-extrabold text-white leading-tight">
+                Secure Your Digital Life
+            </h1>
+            <p class="text-lg md:text-xl text-gray-300 max-w-xl mx-auto">
+                The SyntaxRepo Password Generator is a simple and powerful tool to create strong, unique passwords and hash your existing ones with SHA-256 encryption.
+            </p>
+            <div class="mt-8">
+                <!-- This button now shows the password generator section -->
+                <button id="goToGeneratorButton" class="inline-block bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-lg shadow-xl transition duration-300 ease-in-out transform hover:scale-105">
+                    Go to Generator
+                </button>
+            </div>
+        </div>
+    </main>
+
+    <!-- Password Generator Section - Hidden by default -->
+    <div id="generator-section" class="p-4 md:p-8 flex items-center justify-center min-h-screen hidden">
+
+        <!-- Message box for copy confirmation -->
+        <div id="messageBox" class="fixed top-8 left-1/2 -translate-x-1/2 z-50 bg-green-500 text-white px-6 py-3 rounded-full shadow-lg transition-opacity duration-300 opacity-0 hidden">
+            Copied to clipboard!
+        </div>
+
+        <div class="container max-w-2xl bg-gray-800 p-8 md:p-10 rounded-2xl shadow-2xl space-y-8">
+            <h1 class="text-4xl font-extrabold text-center text-white mb-6">SyntaxRepo Password Generator</h1>
+
+            <!-- Password Generator Section -->
+            <div class="bg-gray-700 p-6 rounded-xl space-y-4">
+                <h2 class="text-2xl font-bold text-white">Generate a Password</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <!-- Length Input -->
+                    <div class="flex items-center space-x-2">
+                        <label for="passwordLength" class="text-gray-300 w-1/3">Length:</label>
+                        <input type="number" id="passwordLength" value="12" min="6" max="64"
+                               class="flex-grow p-2 rounded-lg bg-gray-600 border-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 text-white">
+                    </div>
+                    <!-- Options -->
+                    <div class="grid grid-cols-2 gap-2 text-sm md:text-base">
+                        <label class="flex items-center cursor-pointer">
+                            <input type="checkbox" id="includeUppercase" class="h-5 w-5 text-blue-600 rounded" checked>
+                            <span class="ml-2 text-gray-300">Uppercase</span>
+                        </label>
+                        <label class="flex items-center cursor-pointer">
+                            <input type="checkbox" id="includeLowercase" class="h-5 w-5 text-blue-600 rounded" checked>
+                            <span class="ml-2 text-gray-300">Lowercase</span>
+                        </label>
+                        <label class="flex items-center cursor-pointer">
+                            <input type="checkbox" id="includeSymbols" class="h-5 w-5 text-blue-600 rounded" checked>
+                            <span class="ml-2 text-gray-300">Symbols</span>
+                        </label>
+                        <label class="flex items-center cursor-pointer">
+                            <input type="checkbox" id="includeNumbers" class="h-5 w-5 text-blue-600 rounded" checked>
+                            <span class="ml-2 text-gray-300">Numbers</span>
+                        </label>
+                    </div>
+                </div>
+                <!-- Generated Password Output -->
+                <div class="flex items-center space-x-2 bg-gray-900 p-3 rounded-lg overflow-hidden">
+                    <span id="generatedPassword" class="flex-grow font-mono text-lg text-green-400 truncate">Your generated password will appear here...</span>
+                    <button id="generateButton" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg shadow-md transition duration-300 ease-in-out">
+                        Generate
+                    </button>
+                    <button id="copyGeneratedButton" class="bg-gray-600 hover:bg-gray-500 text-white font-semibold py-2 px-4 rounded-lg shadow-md transition duration-300 ease-in-out">
+                        Copy
+                    </button>
+                </div>
+            </div>
+
+            <!-- Password Hashing Section -->
+            <div class="bg-gray-700 p-6 rounded-xl space-y-4">
+                <h2 class="text-2xl font-bold text-white">Hash Your Own Password</h2>
+                <div class="space-y-4">
+                    <!-- User Password Input -->
+                    <input type="text" id="userPassword" placeholder="Enter password to hash"
+                           class="w-full p-3 rounded-lg bg-gray-600 border-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 text-white placeholder-gray-400">
+
+                    <!-- Hashed Password Output -->
+                    <div class="flex items-center space-x-2 bg-gray-900 p-3 rounded-lg overflow-hidden">
+                        <span id="hashedOutput" class="flex-grow font-mono text-lg text-orange-400 truncate">Your hash will appear here...</span>
+                        <button id="hashButton" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg shadow-md transition duration-300 ease-in-out">
+                            Hash
+                        </button>
+                        <button id="copyHashedButton" class="bg-gray-600 hover:bg-gray-500 text-white font-semibold py-2 px-4 rounded-lg shadow-md transition duration-300 ease-in-out">
+                            Copy
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 py-4 text-center text-gray-500">
+        <p>&copy; 2025 SyntaxRepo. All rights reserved.</p>
+    </footer>
+
+    <script>
+        // DOM element references
+        const passwordLengthInput = document.getElementById('passwordLength');
+        const includeUppercaseCheckbox = document.getElementById('includeUppercase');
+        const includeLowercaseCheckbox = document.getElementById('includeLowercase');
+        const includeSymbolsCheckbox = document.getElementById('includeSymbols');
+        const includeNumbersCheckbox = document.getElementById('includeNumbers');
+        const generateButton = document.getElementById('generateButton');
+        const copyGeneratedButton = document.getElementById('copyGeneratedButton');
+        const generatedPasswordSpan = document.getElementById('generatedPassword');
+        
+        const userPasswordInput = document.getElementById('userPassword');
+        const hashButton = document.getElementById('hashButton');
+        const copyHashedButton = document.getElementById('copyHashedButton');
+        const hashedOutputSpan = document.getElementById('hashedOutput');
+        const messageBox = document.getElementById('messageBox');
+
+        // New DOM element references for the buttons and generator section
+        const goToGeneratorButton = document.getElementById('goToGeneratorButton');
+        const navGoToGeneratorButton = document.getElementById('navGoToGeneratorButton');
+        const generatorSection = document.getElementById('generator-section');
+        const homeButton = document.getElementById('homeButton');
+
+        // Character sets for password generation
+        const lowercaseChars = 'abcdefghijklmnopqrstuvwxyz';
+        const uppercaseChars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        const numberChars = '0123456789';
+        const symbolChars = '!@#$%^&*()-_=+[]{}|;:,.<>?';
+
+        /**
+         * Shows a temporary message box for a few seconds.
+         */
+        function showMessage() {
+            messageBox.classList.remove('hidden', 'opacity-0');
+            messageBox.classList.add('opacity-100');
+            setTimeout(() => {
+                messageBox.classList.remove('opacity-100');
+                messageBox.classList.add('opacity-0');
+                setTimeout(() => {
+                    messageBox.classList.add('hidden');
+                }, 300); // Wait for fade-out to finish
+            }, 2000); // Show for 2 seconds
+        }
+
+        /**
+         * Copies the provided text to the clipboard and shows a confirmation message.
+         * @param {string} text The text to copy.
+         */
+        function copyToClipboard(text) {
+            const tempInput = document.createElement('textarea');
+            tempInput.value = text;
+            document.body.appendChild(tempInput);
+            tempInput.select();
+            document.execCommand('copy');
+            document.body.removeChild(tempInput);
+            showMessage();
+        }
+
+        /**
+         * Generates a random password based on user-selected criteria.
+         */
+        generateButton.addEventListener('click', () => {
+            const length = parseInt(passwordLengthInput.value, 10);
+            const includeUppercase = includeUppercaseCheckbox.checked;
+            const includeLowercase = includeLowercaseCheckbox.checked;
+            const includeSymbols = includeSymbolsCheckbox.checked;
+            const includeNumbers = includeNumbersCheckbox.checked;
+            let characters = '';
+            let password = '';
+
+            // Add selected character types to the pool
+            if (includeUppercase) {
+                characters += uppercaseChars;
+            }
+            if (includeLowercase) {
+                characters += lowercaseChars;
+            }
+            if (includeNumbers) {
+                characters += numberChars;
+            }
+            if (includeSymbols) {
+                characters += symbolChars;
+            }
+            
+            if (characters.length === 0) {
+                generatedPasswordSpan.textContent = "Please select at least one character type.";
+                return;
+            }
+
+            // Generate the password by randomly selecting characters
+            for (let i = 0; i < length; i++) {
+                const randomIndex = Math.floor(Math.random() * characters.length);
+                password += characters[randomIndex];
+            }
+
+            generatedPasswordSpan.textContent = password;
+        });
+        
+        /**
+         * Event listener for the generated password copy button.
+         */
+        copyGeneratedButton.addEventListener('click', () => {
+            const password = generatedPasswordSpan.textContent;
+            if (password && password !== "Your generated password will appear here..." && password !== "Please select at least one character type.") {
+                copyToClipboard(password);
+            }
+        });
+
+        /**
+         * Hashes a given string using the SHA-256 algorithm via the Web Cryptography API.
+         * @param {string} text The text to hash.
+         * @returns {Promise<string>} A promise that resolves to the hexadecimal hash string.
+         */
+        async function sha256(text) {
+            // Encode the text into a byte array
+            const textEncoder = new TextEncoder();
+            const data = textEncoder.encode(text);
+            
+            // Hash the data using SHA-256
+            const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+            
+            // Convert the hash buffer to a hexadecimal string
+            const hashArray = Array.from(new Uint8Array(hashBuffer));
+            const hexHash = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+            
+            return hexHash;
+        }
+
+        /**
+         * Event listener for the hash button. Hashes the user's input.
+         */
+        hashButton.addEventListener('click', async () => {
+            const password = userPasswordInput.value;
+            if (password) {
+                try {
+                    hashedOutputSpan.textContent = "Hashing...";
+                    const hash = await sha256(password);
+                    hashedOutputSpan.textContent = hash;
+                } catch (error) {
+                    console.error("Error during hashing:", error);
+                    hashedOutputSpan.textContent = "Error hashing password.";
+                }
+            } else {
+                hashedOutputSpan.textContent = "Please enter a password.";
+            }
+        });
+
+        /**
+         * Event listener for the hashed password copy button.
+         */
+        copyHashedButton.addEventListener('click', () => {
+            const hash = hashedOutputSpan.textContent;
+            if (hash && hash !== "Your hash will appear here..." && hash !== "Hashing..." && hash !== "Error hashing password." && hash !== "Please enter a password.") {
+                copyToClipboard(hash);
+            }
+        });
+
+        /**
+         * Function to show the generator section and scroll to it.
+         */
+        function showGeneratorAndScroll() {
+            generatorSection.classList.remove('hidden');
+            generatorSection.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        /**
+         * Function to hide the generator section and scroll to the homepage.
+         */
+        function hideGeneratorAndScrollHome() {
+            generatorSection.classList.add('hidden');
+            document.getElementById('homepage-section').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // Event listeners for the buttons
+        goToGeneratorButton.addEventListener('click', showGeneratorAndScroll);
+        navGoToGeneratorButton.addEventListener('click', showGeneratorAndScroll);
+        homeButton.addEventListener('click', hideGeneratorAndScrollHome);
+
+    </script>
+
+</body>
+</html>
